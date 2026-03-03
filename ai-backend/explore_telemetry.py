@@ -1,5 +1,9 @@
 import fastf1
+import fastf1.plotting
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 
 def explore_millisecond_telemetry():
@@ -48,6 +52,55 @@ def explore_millisecond_telemetry():
     print(f"\nMengekspor data {len(telemetry_export)} baris ke {export_path}...")
     telemetry_export[cols_to_export].to_excel(export_path, index=False)
     print("Ekspor selesai!")
+
+    # ================= VISUALISASI TELEMETRI ================= #
+    print("\nMembuat visualisasi grafik telemetri milidetik...")
+    
+    # Siapkan tema FastF1
+    fastf1.plotting.setup_mpl(color_scheme='fastf1')
+    
+    t = telemetry_export['Time_s']  # Waktu dalam detik (sumbu X)
+
+    fig, axes = plt.subplots(3, 1, figsize=(14, 9), sharex=True)
+    fig.suptitle(
+        f"Telemetri Milidetik Max Verstappen\nBahrain Grand Prix 2023 – Lap Tercepat ({fastest_ver['LapTime']})",
+        fontsize=14, fontweight='bold'
+    )
+
+    # Panel 1: Kecepatan (Speed)
+    axes[0].plot(t, telemetry_export['Speed'], color='#E8002D', linewidth=1.2)
+    axes[0].set_ylabel('Kecepatan (km/h)')
+    axes[0].set_ylim(0, 360)
+    axes[0].grid(alpha=0.3)
+    axes[0].set_title('Speed')
+
+    # Panel 2: Injakan Gas (Throttle %)
+    axes[1].plot(t, telemetry_export['Throttle'], color='#00D2BE', linewidth=1.2)
+    axes[1].set_ylabel('Throttle (%)')
+    axes[1].set_ylim(-5, 110)
+    axes[1].grid(alpha=0.3)
+    axes[1].set_title('Throttle')
+
+    # Panel 3: Status Rem (Brake True/False)
+    axes[2].fill_between(t, telemetry_export['Brake'].astype(int),
+                         color='#FF8700', alpha=0.8, linewidth=0)
+    axes[2].set_ylabel('Rem Aktif')
+    axes[2].set_ylim(-0.1, 1.5)
+    axes[2].set_yticks([0, 1])
+    axes[2].set_yticklabels(['Off', 'On'])
+    axes[2].grid(alpha=0.3)
+    axes[2].set_title('Brake')
+
+    axes[2].set_xlabel('Waktu dalam Lap (detik)')
+
+    plt.tight_layout()
+
+    # Simpan sebagai JPG di folder plots/
+    if not os.path.exists('plots'):
+        os.makedirs('plots')
+    jpg_path = os.path.join('plots', 'telemetry_ver_fastest.jpg')
+    plt.savefig(jpg_path, dpi=200, format='jpeg', bbox_inches='tight')
+    print(f"Visualisasi berhasil disimpan: {jpg_path}")
 
 if __name__ == "__main__":
     explore_millisecond_telemetry()
