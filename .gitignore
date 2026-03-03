@@ -1,0 +1,15 @@
+# Python Virtual Environment
+env/
+venv/
+
+# FastF1 Cache
+cache/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+.agents/
+
+# OS generated files
+.DS_Store
