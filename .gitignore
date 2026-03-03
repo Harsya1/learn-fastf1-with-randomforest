@@ -11,5 +11,12 @@ __pycache__/
 
 .agents/
 
+# Data and Plots (Private)
+data/
+plots/
+*.xlsx
+*.png
+~$*.xlsx
+
 # OS generated files
 .DS_Store

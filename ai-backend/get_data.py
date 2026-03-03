@@ -63,3 +63,11 @@ if __name__ == "__main__":
     print(df.head(10))
     print("\n=== Info Dataframe ===")
     print(df.info())
+    
+    # Ekspor ke Excel di folder data/ agar data utuh bisa dibaca manual
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    export_path = os.path.join('data', 'data_telemetri_f1.xlsx')
+    print(f"\nMengekspor data ke Excel ({export_path})...")
+    df.to_excel(export_path, index=False)
+    print("Berhasil! Silakan buka file Excel tersebut untuk melihat keseluruhan datanya.")
